@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mista"
+dynamic = ["version"]
+description = "Official Python SDK for the Mista Messaging, Verify and Voice APIs"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+authors = [{ name = "Mista" }]
+keywords = ["mista", "sms", "bulk-sms", "otp", "verify", "voice", "rwanda", "africa"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Communications :: Telephony",
+  "Typing :: Typed",
+]
+dependencies = ["httpx>=0.25,<1"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-asyncio>=0.23", "mypy>=1.10", "build>=1.2", "twine>=5"]
+
+[project.urls]
+Homepage = "https://mista.io"
+Documentation = "https://docs.mista.io"
+Source = "https://github.com/mista-io/mista-python"
+Issues = "https://github.com/mista-io/mista-python/issues"
+
+[tool.hatch.version]
+path = "src/mista/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mista"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/mista", "tests", "README.md", "LICENSE", "CHANGELOG.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.mypy]
+strict = true
+python_version = "3.10"
+files = ["src/mista", "tests", "examples"]
+
+[[tool.mypy.overrides]]
+module = ["tests.*", "examples.*"]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
