@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Examples and README use masked US phone numbers (+1555***4567). No code changes.
+
 ## 0.2.0
 
 - Delivery report webhooks: `webhooks.get`, `webhooks.set`, `webhooks.delete`, `webhooks.test`
