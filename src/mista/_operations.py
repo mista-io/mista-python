@@ -286,6 +286,27 @@ def failed_check(error: Exception) -> Optional[Dict[str, Any]]:
     return None
 
 
+# ------------------------------------------------------------- Webhooks
+
+WEBHOOKS_PATH = "/api/v3/webhooks/delivery-reports"
+
+
+def webhooks_get() -> Request:
+    return Request("GET", WEBHOOKS_PATH)
+
+
+def webhooks_set(url: str, rotate_secret: Optional[bool] = None) -> Request:
+    return Request("PUT", WEBHOOKS_PATH, body=_compact({"url": url, "rotate_secret": rotate_secret or None}))
+
+
+def webhooks_delete() -> Request:
+    return Request("DELETE", WEBHOOKS_PATH)
+
+
+def webhooks_test() -> Request:
+    return Request("POST", f"{WEBHOOKS_PATH}/test")
+
+
 # ---------------------------------------------------------------- Voice
 
 

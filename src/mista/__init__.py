@@ -19,8 +19,12 @@ from ._errors import (
 from ._operations import MAX_BULK_RECIPIENTS
 from ._version import __version__
 from .pagination import AsyncPage, Page, PageMeta
+from .webhooks import SIGNATURE_HEADER, WebhookVerificationError, verify_webhook
 
 __all__ = [
+    "verify_webhook",
+    "WebhookVerificationError",
+    "SIGNATURE_HEADER",
     "Mista",
     "AsyncMista",
     "DEFAULT_BASE_URL",

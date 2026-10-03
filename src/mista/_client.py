@@ -20,6 +20,7 @@ from ._resources import (
     AsyncSms,
     AsyncVerify,
     AsyncVoice,
+    AsyncWebhooks,
     Campaigns,
     ContactGroups,
     Contacts,
@@ -27,6 +28,7 @@ from ._resources import (
     Sms,
     Verify,
     Voice,
+    Webhooks,
 )
 
 
@@ -57,6 +59,7 @@ class Mista(BaseClient):
         self.contacts = Contacts(self)
         self.verify = Verify(self)
         self.voice = Voice(self)
+        self.webhooks = Webhooks(self)
 
     def request(self, request: Request) -> Any:
         """Send a request and return the ``data`` field of the response envelope."""
@@ -121,6 +124,7 @@ class AsyncMista(BaseClient):
         self.contacts = AsyncContacts(self)
         self.verify = AsyncVerify(self)
         self.voice = AsyncVoice(self)
+        self.webhooks = AsyncWebhooks(self)
 
     async def request(self, request: Request) -> Any:
         """Send a request and return the ``data`` field of the response envelope."""

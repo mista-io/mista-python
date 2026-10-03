@@ -15,7 +15,9 @@ from .types import (
     Contact,
     ContactGroup,
     ContactListItem,
+    DeliveryReportWebhook,
     GroupCampaignResult,
+    MessageStatus,
     SmsMessage,
     SmsType,
     Verification,
@@ -24,7 +26,10 @@ from .types import (
     VoiceAccessToken,
     VoiceCall,
     VoiceNumber,
+    WebhookEvent,
+    WebhookTestResult,
 )
+from .webhooks import DEFAULT_TOLERANCE, verify_webhook
 
 if TYPE_CHECKING:
     from ._client import AsyncMista, Mista
@@ -115,7 +120,7 @@ class Logs(_Resource):
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         sender_id: Optional[str] = None,
-        status: Optional[str] = None,
+        status: Optional[MessageStatus] = None,
         sms_type: Optional[SmsType] = None,
     ) -> Page[SmsMessage]:
         """Messages sent from your account. Iterate the page to walk every page."""
@@ -237,6 +242,34 @@ class Calls(_Resource):
         return cast(VoiceCall, self._client.request(op.calls_get(uid)))
 
 
+class Webhooks(_Resource):
+    """Delivery report webhook: Mista POSTs to your URL when a message is delivered or fails."""
+
+    def get(self) -> DeliveryReportWebhook:
+        """The current registration. ``url`` is None when no webhook is set."""
+        return cast(DeliveryReportWebhook, self._client.request(op.webhooks_get()))
+
+    def set(self, *, url: str, rotate_secret: bool = False) -> DeliveryReportWebhook:
+        """Register or change the URL. The response includes the signing secret.
+        ``rotate_secret=True`` issues a new secret; the old one stops working immediately."""
+        return cast(DeliveryReportWebhook, self._client.request(op.webhooks_set(url, rotate_secret)))
+
+    def delete(self) -> DeliveryReportWebhook:
+        """Stop sending delivery reports and forget the secret."""
+        return cast(DeliveryReportWebhook, self._client.request(op.webhooks_delete()))
+
+    def test(self) -> WebhookTestResult:
+        """Send a signed ``webhook.test`` event to the registered URL now and report how it answered."""
+        return cast(WebhookTestResult, self._client.request(op.webhooks_test()))
+
+    @staticmethod
+    def verify(
+        payload: Union[str, bytes], signature_header: Optional[str], secret: str, *, tolerance: int = DEFAULT_TOLERANCE
+    ) -> WebhookEvent:
+        """Same as :func:`mista.verify_webhook`."""
+        return verify_webhook(payload, signature_header, secret, tolerance=tolerance)
+
+
 class Voice(_Resource):
     def __init__(self, client: "Mista") -> None:
         super().__init__(client)
@@ -328,7 +361,7 @@ class AsyncLogs(_AsyncResource):
         start_date: Optional[str] = None,
         end_date: Optional[str] = None,
         sender_id: Optional[str] = None,
-        status: Optional[str] = None,
+        status: Optional[MessageStatus] = None,
         sms_type: Optional[SmsType] = None,
     ) -> AsyncPage[SmsMessage]:
         filters: Dict[str, Any] = dict(
@@ -454,3 +487,24 @@ class AsyncVoice(_AsyncResource):
 
     async def numbers(self) -> List[VoiceNumber]:
         return cast(List[VoiceNumber], await self._client.request(op.voice_numbers()))
+
+
+class AsyncWebhooks(_AsyncResource):
+    async def get(self) -> DeliveryReportWebhook:
+        return cast(DeliveryReportWebhook, await self._client.request(op.webhooks_get()))
+
+    async def set(self, *, url: str, rotate_secret: bool = False) -> DeliveryReportWebhook:
+        return cast(DeliveryReportWebhook, await self._client.request(op.webhooks_set(url, rotate_secret)))
+
+    async def delete(self) -> DeliveryReportWebhook:
+        return cast(DeliveryReportWebhook, await self._client.request(op.webhooks_delete()))
+
+    async def test(self) -> WebhookTestResult:
+        return cast(WebhookTestResult, await self._client.request(op.webhooks_test()))
+
+    @staticmethod
+    def verify(
+        payload: Union[str, bytes], signature_header: Optional[str], secret: str, *, tolerance: int = DEFAULT_TOLERANCE
+    ) -> WebhookEvent:
+        """Same as :func:`mista.verify_webhook`."""
+        return verify_webhook(payload, signature_header, secret, tolerance=tolerance)

@@ -8,6 +8,12 @@ SmsType = Literal["plain", "unicode", "voice", "mms", "whatsapp", "viber", "otp"
 VerifyChannel = Literal["auto", "sms", "whatsapp", "whatsapp_sms", "sms_whatsapp", "whatsapp_only"]
 CallFilter = Literal["all", "inbound", "outbound", "missed"]
 
+MessageStatus = Literal["Queued", "Sent", "Delivered", "Undelivered", "Expired", "Rejected", "Failed"]
+"""Delivered, Undelivered, Expired, Rejected and Failed are final. Queued: not yet accepted by the
+carrier. Sent: accepted, waiting for the handset delivery report."""
+
+WebhookEventType = Literal["message.delivered", "message.failed", "webhook.test"]
+
 
 class PersonalizedRecipient(TypedDict):
     to: str
@@ -21,7 +27,8 @@ SmsMessage = TypedDict(
         "to": str,
         "from": str,
         "message": str,
-        "status": str,
+        "status": MessageStatus,
+        "status_detail": Optional[str],
         "cost": Union[str, float],
         "sms_type": str,
         "direction": str,
@@ -115,6 +122,47 @@ class VerificationCheck(TypedDict, total=False):
     verified_at: Optional[str]
     reason: str
     """Why the check failed, e.g. ``"invalid_code"`` or ``"expired"``."""
+
+
+class DeliveryReportWebhook(TypedDict):
+    url: Optional[str]
+    secret: Optional[str]
+    """Signing secret (``whsec_...``) used to verify the ``Mista-Signature`` header."""
+    enabled: bool
+    events: List[WebhookEventType]
+
+
+class WebhookTestResult(TypedDict):
+    delivered: bool
+    status_code: Optional[int]
+    """HTTP status your endpoint answered with, or None if it could not be reached."""
+    error: Optional[str]
+    event_id: str
+
+
+DeliveryReport = TypedDict(
+    "DeliveryReport",
+    {
+        "uid": str,
+        "to": str,
+        "from": str,
+        "status": MessageStatus,
+        "status_detail": Optional[str],
+        "cost": str,
+        "sms_count": int,
+        "campaign_uid": Optional[str],
+        "sent_at": Optional[str],
+        "updated_at": Optional[str],
+    },
+)
+
+
+class WebhookEvent(TypedDict):
+    id: str
+    """Unique per event and identical across retries; use it to ignore duplicates."""
+    type: WebhookEventType
+    created_at: str
+    data: DeliveryReport
 
 
 class VoiceAccessToken(TypedDict, total=False):

@@ -4,6 +4,7 @@ import httpx
 import pytest
 
 from mista import (
+    __version__,
     APIConnectionError,
     APIError,
     AuthenticationError,
@@ -28,7 +29,7 @@ def test_headers_and_base_url(make_client):
     assert str(call.url) == "https://api.mista.io/api/v3/balance"
     assert call.headers["authorization"] == "Bearer test-token"
     assert call.headers["accept"] == "application/json"
-    assert call.headers["user-agent"] == "mista-python/0.1.0"
+    assert call.headers["user-agent"] == f"mista-python/{__version__}"
     assert "content-type" not in call.headers
 
 
