@@ -1,4 +1,4 @@
-"""MISTA_API_TOKEN=... python examples/send_sms.py 250780000001"""
+"""MISTA_API_TOKEN=... python examples/send_sms.py '+1555***4567'"""
 
 import sys
 

@@ -17,7 +17,7 @@ from mista import Mista
 
 mista = Mista(token="...")  # or set MISTA_API_TOKEN
 
-message = mista.sms.send(to="250780000001", sender_id="YourBrand", message="Your order has shipped")
+message = mista.sms.send(to="+1555***4567", sender_id="YourBrand", message="Your order has shipped")
 print(message["uid"], message["status"])
 ```
 
@@ -47,7 +47,7 @@ send, use a campaign.
 
 ```python
 message = mista.sms.send(
-    to="250780000001",
+    to="+1555***4567",
     sender_id="YourBrand",
     message="Hello",
     type="plain",  # plain | unicode | voice | mms | whatsapp | viber | otp
@@ -69,7 +69,7 @@ from datetime import datetime
 # Broadcast: one message, up to 10,000 numbers
 mista.campaigns.bulk(
     sender_id="LOYALTY",
-    recipients=["250780000001", "250780000002"],
+    recipients=["+1555***4567", "+1555***7890"],
     message="Double points this weekend!",
     schedule_time=datetime(2026, 12, 24, 9, 0),  # or "2026-12-24 09:00"; account timezone
 )
@@ -78,8 +78,8 @@ mista.campaigns.bulk(
 mista.campaigns.bulk(
     sender_id="LOYALTY",
     recipients=[
-        {"to": "250780000001", "message": "Hi Alice, you have 120 points."},
-        {"to": "250780000002", "message": "Hi Bob, you have 45 points."},
+        {"to": "+1555***4567", "message": "Hi Alice, you have 120 points."},
+        {"to": "+1555***7890", "message": "Hi Bob, you have 45 points."},
     ],
 )
 
@@ -120,14 +120,14 @@ mista.contact_groups.update(group["uid"], "Developers KGL")
 
 contact = mista.contacts.create(
     group["uid"],
-    phone="250780000001",
+    phone="+1555***4567",
     first_name="Alice",
     last_name="Uwase",
     fields={"CITY": "Kigali"},  # custom fields, keyed by the group's field tag
 )
 mista.contacts.list(group["uid"])
 mista.contacts.get(group["uid"], contact["uid"])
-mista.contacts.update(group["uid"], contact["uid"], phone="250780000001", first_name="Alicia")
+mista.contacts.update(group["uid"], contact["uid"], phone="+1555***4567", first_name="Alicia")
 mista.contacts.delete(group["uid"], contact["uid"])
 
 mista.contact_groups.delete(group["uid"])  # also deletes its contacts
@@ -136,7 +136,7 @@ mista.contact_groups.delete(group["uid"])  # also deletes its contacts
 ## Verify (OTP)
 
 ```python
-verification = mista.verify.start(to="+250780000001", channel="sms")
+verification = mista.verify.start(to="+1555***4567", channel="sms")
 
 result = mista.verify.check(sid=verification["sid"], code="123456")
 if result["verified"]:

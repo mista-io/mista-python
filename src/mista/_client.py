@@ -36,7 +36,7 @@ class Mista(BaseClient):
     """Synchronous Mista client.
 
     >>> mista = Mista(token="...")  # or set MISTA_API_TOKEN
-    >>> mista.sms.send(to="250780000001", sender_id="YourBrand", message="Hello")
+    >>> mista.sms.send(to="+1555***4567", sender_id="YourBrand", message="Hello")
     """
 
     def __init__(
